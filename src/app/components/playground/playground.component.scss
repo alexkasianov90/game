@@ -1,0 +1,28 @@
+:host {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+canvas {
+  border: 2px solid #333;
+  border-radius: 4px;
+  margin-bottom: 100px;
+}
+
+.stats {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 24px;
+
+  h6 {
+    font-size: 36px;
+    color: white;
+    margin: 0;
+  }
+}
+
+app-game-settings {
+  width: 500px;
+}

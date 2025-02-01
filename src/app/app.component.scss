@@ -1,0 +1,13 @@
+.content {
+  display: flex;
+  padding: 24px;
+  gap: 24px;
+}
+
+app-play-zone {
+  display: flex;
+  width: 800px;
+  height: 600px;
+  border: 1px solid #333;
+  border-radius: 4px;
+}

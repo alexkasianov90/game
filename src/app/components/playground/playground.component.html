@@ -1,0 +1,13 @@
+<div >
+  <div class="stats">
+
+    <h6>Seconds Left: {{time$ | async }}</h6>
+
+    <h6 >Captured: {{capture$ | async }}</h6>
+
+  </div>
+
+  <canvas #playground [width]="width" [height]="height"></canvas>
+</div>
+
+<app-game-settings (updateSettings)="updateSettings($event)"></app-game-settings>

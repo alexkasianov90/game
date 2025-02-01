@@ -1,0 +1,62 @@
+<form class="setting-form" [formGroup]="settingsForm">
+  <mat-form-field class="example-full-width">
+    <mat-label>Falling Speed</mat-label>
+    <input formControlName="fallingSpeed"  placeholder="Falling Speed (2px - 10px)" type="number" matInput [errorStateMatcher]="matcher">
+      @if (settingsForm.get('fallingSpeed')?.hasError('min')) {
+        <mat-error>Min Falling Speed is 2px</mat-error>
+      }
+
+      @if (settingsForm.get('fallingSpeed')?.hasError('max')) {
+        <mat-error>Max Falling Speed is 10px</mat-error>
+      }
+      @if (settingsForm.get('fallingSpeed')?.hasError('required')) {
+        <mat-error>Falling Speed is <strong>required</strong></mat-error>
+      }
+  </mat-form-field>
+
+  <mat-form-field class="example-full-width">
+    <mat-label>Falling Frequency</mat-label>
+    <input formControlName="fallingFrequency" placeholder="Falling Frequency (100ms - 3000ms)" type="number" matInput [errorStateMatcher]="matcher">
+      @if (settingsForm.get('fallingFrequency')?.hasError('min')) {
+        <mat-error>Min Falling Frequency is 100ms</mat-error>
+      }
+
+      @if (settingsForm.get('fallingFrequency')?.hasError('max')) {
+        <mat-error>Max Falling Frequency is 3000ms</mat-error>
+      }
+      @if (settingsForm.get('fallingFrequency')?.hasError('required')) {
+        <mat-error>Falling Frequency is <strong>required</strong></mat-error>
+      }
+
+  </mat-form-field>
+
+  <mat-form-field class="example-full-width">
+    <mat-label>Player Speed</mat-label>
+    <input formControlName="playerSpeed" placeholder="Player Speed (2px - 14px)" type="number" matInput [errorStateMatcher]="matcher">
+    @if (settingsForm.get('playerSpeed')?.hasError('min')) {
+      <mat-error>Min Player Speed is 2px</mat-error>
+    }
+
+    @if (settingsForm.get('playerSpeed')?.hasError('max')) {
+      <mat-error>Max Player Speed is 14px</mat-error>
+    }
+    @if (settingsForm.get('playerSpeed')?.hasError('required')) {
+      <mat-error>Player Speed is <strong>required</strong></mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field class="example-full-width">
+    <mat-label>Game Time</mat-label>
+    <input formControlName="gameTime" placeholder="Player Speed (10s - 120s)" type="number" matInput [errorStateMatcher]="matcher">
+    @if (settingsForm.get('gameTime')?.hasError('min')) {
+      <mat-error>Min Game Time is 10s</mat-error>
+    }
+
+    @if (settingsForm.get('gameTime')?.hasError('max')) {
+      <mat-error>Max Game Time is 120s</mat-error>
+    }
+    @if (settingsForm.get('gameTime')?.hasError('required')) {
+      <mat-error>Game Time is <strong>required</strong></mat-error>
+    }
+  </mat-form-field>
+</form>
