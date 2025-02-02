@@ -16,6 +16,7 @@ import { checkCircleRectCollision } from '../helpers/check-collision';
 import { WebsocketService } from './websocket.service';
 import { playKeys } from '../const/play-key';
 import { GAME_TICK } from '../const/game_tick';
+import { playerStats } from '../const/player';
 
 @Injectable({
   providedIn: 'root'
@@ -25,17 +26,15 @@ export class GameManagerService extends Game implements OnDestroy {
   private capture = new BehaviorSubject<number>(0);
   public capture$ = this.capture.asObservable();
   constructor(private websocketService: WebsocketService) {
-    super();
-    this.setUpSaver(websocketService);
+    super(websocketService);
   }
 
   public spawnPlayer(): Player {
-    const playerSize = 50;
-    const player = new Player(playerSize, playerSize);
-    const xPos = this.width / 2 - (playerSize / 2);
+    const player = new Player(playerStats.size, playerStats.size);
+    const xPos = this.width / 2 - (playerStats.size / 2);
     this.capture.next(0);
-    player.setColor('#42f598');
-    player.spawn({x: xPos, y: this.height - playerSize});
+    player.setColor(playerStats.color);
+    player.spawn({x: xPos, y: this.height - playerStats.size});
     return player;
   }
 
@@ -56,17 +55,8 @@ export class GameManagerService extends Game implements OnDestroy {
         takeUntil(this.gameOver),
       )
       .subscribe(event => {
-        if (this.player) {
-          if (event.key === playKeys.ArrowLeft) {
-            const currentX = this.player.getPosition().x || 0;
-            this.player.moveX(currentX - this.gameSettings.value.playerSpeed);
-          }
-
-          if (event.key === playKeys.ArrowRight) {
-            const currentX = this.player.getPosition().x || 0;
-            this.player.moveX(currentX + this.gameSettings.value.playerSpeed);
-          }
-        }
+        this.handleRightMove(event);
+        this.handleLeftMove(event);
       });
   }
 
@@ -105,5 +95,25 @@ export class GameManagerService extends Game implements OnDestroy {
         const currentY = fruit.getPosition().y;
         fruit.moveY(currentY + this.gameSettings.value.fallingSpeed);
     })
+  }
+
+  private handleRightMove(event: KeyboardEvent): void {
+    if (!this.player) {
+      return;
+    }
+    const currentX = this.player.getPosition().x || 0;
+    if (event.key === playKeys.ArrowRight && currentX < this.width - this.player.getWidth()) {
+      this.player.moveX(currentX + this.gameSettings.value.playerSpeed);
+    }
+  }
+
+  private handleLeftMove(event: KeyboardEvent): void {
+    if (!this.player) {
+      return;
+    }
+    const currentX = this.player.getPosition().x || 0;
+    if (event.key === playKeys.ArrowLeft && currentX > 0) {
+      this.player.moveX(currentX - this.gameSettings.value.playerSpeed);
+    }
   }
 }

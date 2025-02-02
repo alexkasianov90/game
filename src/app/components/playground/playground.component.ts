@@ -37,7 +37,7 @@ export class PlaygroundComponent implements AfterViewInit {
   }
 
   public updateSettings(settings: GameSettings) {
-    if (!this.gameManagerService.isActiveGame) {
+    if (this.gameManagerService.isGameEnd) {
       this.gameManagerService.startNewGame(settings);
       return;
     }

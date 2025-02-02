@@ -18,11 +18,12 @@ import { SaveGame } from '../interfaces/save-game';
 import { defaultGameSettings } from '../const/default-game-config';
 import { GAME_TICK } from '../const/game_tick';
 
-
 export abstract class Game {
   public abstract NPC: Map<number, BaseObject>;
   public spawnerNPC$!: Observable<number>;
-  public isActiveGame = false;
+  protected gameEnd = new BehaviorSubject<boolean>(false);
+  public gameEnd$ = this.gameEnd.asObservable();
+  public isGameEnd = this.gameEnd.value;
   public game$!: Observable<number>;
   public time$!: Observable<number>;
   protected destroy = new Subject<void>();
@@ -31,13 +32,12 @@ export abstract class Game {
   protected player: Player | null = null;
   protected width!: number;
   protected height!: number;
-  protected gameOver: Subject<void> = new Subject<void>;
-  protected gameSaver!: SaveGame;
+  protected gameOver: Subject<void> = new Subject<void>();
   protected spawnerNPCSub!: Subscription;
   protected restart = new Subject<void>()
 
 
-  protected constructor () {
+  protected constructor (protected gameSaver: SaveGame) {
     this.setUpGame();
     this.setUpTimer();
   }
@@ -52,15 +52,12 @@ export abstract class Game {
   public abstract handleSaveGame(): void;
 
   public startNewGame(gameSettings: GameSettings) {
-    this.gameSaver.init();
-    this.gameSettings.next(gameSettings);
-    this.player = this.spawnPlayer();
-    this.setUpSpawnerNPC();
+    this.initGameSettings(gameSettings);
+    this.spawnObjects();
     this.startRendering();
     this.listenControls();
     this.handleSaveGame();
     this.restart.next();
-    this.isActiveGame = true;
   }
 
   public setUpSpawnerNPC() {
@@ -105,10 +102,6 @@ export abstract class Game {
     this.gameSettings.next(settings);
   }
 
-  public setUpSaver(saver: SaveGame): void {
-    this.gameSaver = saver;
-  }
-
   public getSettings(): GameSettings {
     return this.gameSettings.value;
   }
@@ -121,7 +114,7 @@ export abstract class Game {
         return timer(0, GAME_TICK).pipe(
           take(takeCount),
           finalize(() => {
-            this.isActiveGame = false;
+            this.gameEnd.next(true);
             this.endGame();
           })
         );
@@ -131,7 +124,7 @@ export abstract class Game {
     );
   }
 
-  protected  setUpTimer(): void {
+  protected setUpTimer(): void {
     this.time$ = this.restart.asObservable().pipe(
       switchMap(_ => {
         return timer(0, 1000).pipe(
@@ -142,5 +135,15 @@ export abstract class Game {
       endWith(0),
       takeUntil(this.destroy)
     );
+  }
+  protected initGameSettings(gameSettings: GameSettings): void {
+    this.gameSaver.init();
+    this.gameSettings.next(gameSettings);
+    this.gameEnd.next(false);
+  }
+
+  protected spawnObjects(): void {
+    this.player = this.spawnPlayer();
+    this.setUpSpawnerNPC();
   }
 }
